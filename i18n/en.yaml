@@ -1,0 +1,96 @@
+- id: prev_page
+  translation: "Prev"
+
+- id: next_page
+  translation: "Next"
+
+- id: read_time
+  translation:
+    one : "1 min"
+    other: "{{ .Count }} min"
+
+- id: words
+  translation:
+    one : "word"
+    other: "{{ .Count }} words"
+
+- id: toc
+  translation: "Table of Contents"
+
+- id: translations
+  translation: "Translations"
+
+- id: home
+  translation: "Home"
+
+- id: edit_post
+  translation: "Edit"
+
+- id: code_copy
+  translation: "copy"
+
+- id: code_copied
+  translation: "copied!"
+
+- id: articles
+  translation: "Articles"
+
+- id: books_label
+  translation: "Books"
+
+- id: tags_label
+  translation: "Tags"
+
+- id: articles_this_year
+  translation: "In {{ .Year }}"
+
+- id: latest_articles
+  translation: "Latest Articles"
+
+- id: related_articles
+  translation: "Related Articles"
+
+- id: categories_label
+  translation: "Categories"
+
+- id: posts_count
+  translation: "posts"
+
+- id: by_count
+  translation: "By Count"
+
+- id: alphabetical
+  translation: "Alphabetical"
+
+- id: toggle_theme
+  translation: "Toggle Theme"
+
+- id: buy_me_coffee_text
+  translation: "Buy me a coffee"
+
+- id: table_of_contents
+  translation: "Table of Contents"
+
+- id: updated
+  translation: "Updated"
+
+- id: chapters_count
+  translation: "chapters"
+
+- id: read_on_source
+  translation: "Read on Zenn →"
+
+- id: chapter_prev
+  translation: "Previous"
+
+- id: chapter_next
+  translation: "Next"
+
+- id: chapters_label
+  translation: "Chapters"
+
+- id: popular_tags
+  translation: "Popular Tags"
+
+- id: all_posts
+  translation: "All posts"

@@ -1,0 +1,13 @@
+name = "Flavor"
+license = "MIT"
+licenselink = "https://github.com/nakamura196/hugo-theme-flavor/blob/main/LICENSE"
+description = "A modern Hugo theme with Tailwind CSS v4, dark/light mode, multilingual support, and sticky sidebar TOC"
+homepage = "https://github.com/nakamura196/hugo-theme-flavor"
+demosite = ""
+tags = ["blog", "tailwind", "responsive", "dark", "light", "multilingual", "search", "toc"]
+features = ["dark mode", "light mode", "multilingual", "search", "table of contents", "responsive", "syntax highlighting"]
+min_version = "0.157.0"
+
+[author]
+name = "Nakamura"
+homepage = "https://github.com/nakamura196"

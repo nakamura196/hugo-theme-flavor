@@ -1,0 +1,76 @@
+{{- define "main" }}
+{{- $lang := .Lang }}
+<div class="site-main">
+{{ if .Params.bookSlug }}
+{{/* Individual book section — show chapters */}}
+<article class="book-section">
+  <header class="book-header">
+    {{ with .Params.cover }}
+    <div class="book-card-cover">
+      <img src="{{ .image }}" alt="{{ $.Title }}" loading="lazy">
+    </div>
+    {{ end }}
+    <div class="book-header-info">
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p class="book-card-desc">{{ . }}</p>{{ end }}
+      {{ with .Params.tags }}
+      <div class="book-card-tags">
+        {{- range . }}
+        <span class="book-tag">{{ . }}</span>
+        {{- end }}
+      </div>
+      {{ end }}
+      {{ with .Params.source }}
+      <a href="{{ . }}" target="_blank" rel="noopener" class="book-source-link">{{ i18n "read_on_source" }}</a>
+      {{ end }}
+    </div>
+  </header>
+
+  <section class="book-toc">
+    <h2>{{ i18n "chapters_label" }}</h2>
+    <ol class="book-chapter-list">
+      {{- range .Params.chapters }}
+      <li>
+        <a href="{{ printf "/%s/books/%s/%s/" $lang $.Params.bookSlug .slug | absURL }}">{{ .title }}</a>
+      </li>
+      {{- end }}
+    </ol>
+  </section>
+</article>
+{{ else }}
+{{/* Top-level books list */}}
+<header class="page-header">
+  <h1>{{ .Title }}</h1>
+  {{ with .Description }}<p>{{ . }}</p>{{ end }}
+</header>
+
+<div class="book-grid">
+  {{- range .Sections }}
+  <article class="book-card">
+    <a href="{{ .Permalink }}">
+      {{ with .Params.cover }}
+      <div class="book-card-cover">
+        <img src="{{ .image }}" alt="{{ $.Title }}" loading="lazy">
+      </div>
+      {{ end }}
+      <div class="book-card-body">
+        <h2 class="book-card-title">{{ .Title }}</h2>
+        {{ with .Description }}<p class="book-card-desc">{{ . }}</p>{{ end }}
+        {{ with .Params.chapters }}
+        <span class="book-card-meta">{{ len . }} {{ i18n "chapters_count" }}</span>
+        {{ end }}
+        {{ with .Params.tags }}
+        <div class="book-card-tags">
+          {{- range . }}
+          <span class="book-tag">{{ . }}</span>
+          {{- end }}
+        </div>
+        {{ end }}
+      </div>
+    </a>
+  </article>
+  {{- end }}
+</div>
+{{ end }}
+</div>
+{{- end }}

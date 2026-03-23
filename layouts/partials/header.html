@@ -1,0 +1,140 @@
+<header class="site-header">
+    <div class="site-header-inner">
+        {{- if site.Title }}
+        <a href="{{ "" | absLangURL }}" class="site-logo" accesskey="h" title="{{ site.Params.label.text | default site.Title }} (Alt + H)">
+            {{- site.Params.label.text | default site.Title -}}
+        </a>
+        {{- end }}
+
+        {{- /* Desktop Navigation */}}
+        <nav class="site-nav">
+            {{- $currentPage := . }}
+            {{- range site.Menus.main }}
+            {{- $menu_item_url := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL) ) | absLangURL }}
+            {{- $page_url := $currentPage.Permalink | absLangURL }}
+            {{- $is_search := false }}{{- with site.GetPage .KeyName }}{{- $is_search = eq .Layout `search` }}{{- end }}
+            <a href="{{ .URL | absLangURL }}" title="{{ .Title | default .Name }}"
+                {{- cond $is_search (" accesskey=/" | safeHTMLAttr) ("" | safeHTMLAttr ) }}>
+                <span {{- if eq $menu_item_url $page_url }} class="active" {{- end }}>
+                    {{- .Name -}}
+                </span>
+            </a>
+            {{- end }}
+        </nav>
+
+        {{- /* Controls: theme toggle + language switch */}}
+        <div class="header-controls">
+            {{- if (not site.Params.disableThemeToggle) }}
+            <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+            {{- end }}
+
+            {{- if (not site.Params.disableLangToggle) }}
+            {{- $lang := .Lang}}
+            {{- with site.Home.Translations }}
+            {{- range . -}}
+            {{- if ne $lang .Lang }}
+            <a href="{{- .Permalink -}}" title="{{ .Language.LanguageName }}" aria-label="{{ .Language.LanguageName }}">
+                {{- .Lang | upper -}}
+            </a>
+            {{- end -}}
+            {{- end }}
+            {{- end }}
+            {{- end }}
+        </div>
+
+        {{- /* Hamburger (mobile) */}}
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+            <svg class="hamburger-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+            <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    </div>
+</header>
+
+{{- /* Mobile Menu - OUTSIDE header to avoid stacking context issues */}}
+<div class="mobile-menu" id="mobile-menu">
+    {{- range site.Menus.main }}
+    <a href="{{ .URL | absLangURL }}">{{ .Name }}</a>
+    {{- end }}
+    <div style="display:flex;gap:0.5rem;padding:1rem 0;margin-top:0.5rem;">
+        {{- if (not site.Params.disableThemeToggle) }}
+        <button id="mobile-theme-toggle" aria-label="Toggle theme" style="padding:0.5rem 1rem;border:1px solid var(--color-border);border-radius:6px;background:var(--color-entry);color:var(--color-primary);cursor:pointer;">
+            {{ i18n "toggle_theme" }}
+        </button>
+        {{- end }}
+        {{- $lang := .Lang}}
+        {{- with site.Home.Translations }}
+        {{- range . -}}
+        {{- if ne $lang .Lang }}
+        <a href="{{- .Permalink -}}" style="padding:0.5rem 1rem;border:1px solid var(--color-border);border-radius:6px;background:var(--color-entry);display:inline-block;">
+            {{ .Language.LanguageName }}
+        </a>
+        {{- end -}}
+        {{- end }}
+        {{- end }}
+    </div>
+</div>
+
+<script>
+(function() {
+    var hamburger = document.getElementById('hamburger');
+    var mobileMenu = document.getElementById('mobile-menu');
+    if (!hamburger || !mobileMenu) return;
+    hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var expanded = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', !expanded);
+        mobileMenu.classList.toggle('open');
+        if (!expanded) {
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        }
+    });
+    // Close menu when clicking a link
+    mobileMenu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            mobileMenu.classList.remove('open');
+            hamburger.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+        });
+    });
+
+    var mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+    if (mobileThemeToggle) {
+        mobileThemeToggle.addEventListener('click', function() {
+            document.getElementById('theme-toggle').click();
+        });
+    }
+})();
+</script>

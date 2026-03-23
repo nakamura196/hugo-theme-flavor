@@ -1,0 +1,89 @@
+baseURL: "https://example.com/"
+title: "My Blog"
+theme: "hugo-theme-flavor"
+pagination:
+  pagerSize: 10
+defaultContentLanguage: en
+defaultContentLanguageInSubdir: true
+
+languages:
+  en:
+    languageName: "English"
+    weight: 1
+    contentDir: "content/en"
+    title: "My Tech Blog"
+    params:
+      description: "A blog about technology and development"
+      homeInfoParams:
+        Title: "My Tech Blog"
+        Content: "Welcome to my blog about technology, development, and more"
+    menu:
+      main:
+        - name: Home
+          url: /en/
+          weight: 1
+        - name: Articles
+          url: /en/posts/
+          weight: 2
+        - name: Tags
+          url: /en/tags/
+          weight: 3
+        - name: Search
+          url: /en/search/
+          weight: 4
+        - name: About
+          url: /en/about/
+          weight: 5
+      footer:
+        - name: Home
+          url: /en/
+          weight: 1
+          params:
+            group: Content
+        - name: Articles
+          url: /en/posts/
+          weight: 2
+          params:
+            group: Content
+        - name: Tags
+          url: /en/tags/
+          weight: 3
+          params:
+            group: Browse
+        - name: About
+          url: /en/about/
+          weight: 4
+          params:
+            group: Other
+
+params:
+  author: "Your Name"
+  env: production
+  showReadingTime: true
+  mainSections: ["posts"]
+  showBreadCrumbs: true
+  showCodeCopyButtons: true
+  showToc: true
+  defaultTheme: auto
+  disableThemeToggle: false
+  label:
+    text: "Flavor"
+
+taxonomies:
+  category: categories
+  tag: tags
+
+outputs:
+  home:
+    - HTML
+    - RSS
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  tableOfContents:
+    startLevel: 2
+    endLevel: 3
+  highlight:
+    noClasses: false

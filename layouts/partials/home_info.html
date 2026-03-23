@@ -1,0 +1,61 @@
+{{- with site.Params.homeInfoParams }}
+<section class="hero">
+    <div class="hero-inner">
+        <p style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.15em;color:#94a3b8;margin-bottom:0.5rem;">
+            DIGITAL ARCHIVE TECH BLOG
+        </p>
+        <h1 class="hero-title">{{ .Title | markdownify }}</h1>
+        <p class="hero-subtitle">{{ .Content | markdownify }}</p>
+
+        {{/* --- Build-time stats --- */}}
+        {{- $posts := where site.RegularPages "Section" "posts" -}}
+        {{- $totalArticles := len $posts -}}
+        {{- $totalBooks := 0 -}}
+        {{- range site.Sections -}}
+            {{- if eq .Section "books" -}}
+                {{- $totalBooks = len .Sections -}}
+            {{- end -}}
+        {{- end -}}
+        {{- $totalTags := len site.Taxonomies.tags -}}
+        {{- $currentYear := now.Format "2006" -}}
+        {{- $thisYearPosts := where $posts "Date.Year" (int $currentYear) -}}
+        {{- $thisYearCount := len $thisYearPosts -}}
+
+        <div class="hero-stats">
+            <a href="{{ absLangURL "posts/" }}" class="hero-stat">
+                <div class="hero-stat-value">{{ $totalArticles }}</div>
+                <div class="hero-stat-label">{{ i18n "articles" }}</div>
+            </a>
+            <a href="{{ absLangURL "books/" }}" class="hero-stat">
+                <div class="hero-stat-value">{{ $totalBooks }}</div>
+                <div class="hero-stat-label">{{ i18n "books_label" }}</div>
+            </a>
+            <a href="{{ absLangURL "tags/" }}" class="hero-stat">
+                <div class="hero-stat-value">{{ $totalTags }}</div>
+                <div class="hero-stat-label">{{ i18n "tags_label" }}</div>
+            </a>
+            <a href="{{ absLangURL "archives/" }}" class="hero-stat">
+                <div class="hero-stat-value">{{ $thisYearCount }}</div>
+                <div class="hero-stat-label">{{ i18n "articles_this_year" (dict "Year" $currentYear) }}</div>
+            </a>
+        </div>
+
+        {{/* --- Popular tags --- */}}
+        {{- $tags := site.Taxonomies.tags -}}
+        {{- $tagList := slice -}}
+        {{- range $name, $pages := $tags -}}
+            {{- $tagList = $tagList | append (dict "name" $name "count" (len $pages)) -}}
+        {{- end -}}
+        {{- $sortedTags := sort $tagList "count" "desc" -}}
+
+        <div class="hero-tags">
+            {{- range first 8 $sortedTags -}}
+                <a href="{{ absLangURL (printf "tags/%s/" .name) }}" class="hero-tag">
+                    {{ .name }}
+                    <span class="hero-tag-count">{{ .count }}</span>
+                </a>
+            {{- end -}}
+        </div>
+    </div>
+</section>
+{{- end -}}

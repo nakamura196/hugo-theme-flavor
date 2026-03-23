@@ -1,0 +1,95 @@
+{{- define "main" }}
+{{- $bookSlug := .Params.bookSlug }}
+{{- $currentSlug := .File.ContentBaseName }}
+{{- $book := .Parent }}
+{{- $chapters := $book.Params.chapters }}
+{{- $lang := .Lang }}
+
+<div class="book-layout">
+  {{/* Mobile toggle */}}
+  <button class="book-sidebar-toggle" onclick="document.querySelector('.book-sidebar').classList.toggle('open')" aria-label="Toggle sidebar">
+    ☰ {{ i18n "chapters_label" }}
+  </button>
+
+  {{/* Sidebar */}}
+  <nav class="book-sidebar">
+    <div class="book-sidebar-inner">
+      <div class="book-sidebar-title">
+        <a href="{{ $book.Permalink }}">{{ $book.Title }}</a>
+      </div>
+      <ol>
+        {{- range $chapters }}
+        <li>
+          <a href="{{ printf "/%s/books/%s/%s/" $lang $bookSlug .slug | absURL }}" class="{{ if eq .slug $currentSlug }}current{{ end }}">{{ .title }}</a>
+        </li>
+        {{- end }}
+      </ol>
+    </div>
+  </nav>
+
+  {{/* Main content */}}
+  <article class="book-content">
+    <header class="post-header">
+      {{ partial "breadcrumbs.html" . }}
+      <h1 class="post-title">{{ .Title }}</h1>
+      {{- if .Description }}
+      <div class="post-description">{{ .Description }}</div>
+      {{- end }}
+      <div class="post-meta">
+        {{- partial "post_meta.html" . -}}
+        {{- with .Params.source }}
+        &nbsp;·&nbsp;<a href="{{ . }}" target="_blank" rel="noopener">{{ i18n "read_on_source" }}</a>
+        {{- end }}
+      </div>
+    </header>
+
+    {{- if (.Param "ShowToc") }}
+    {{- partial "toc.html" . }}
+    {{- end }}
+
+    {{- if .Content }}
+    <div class="post-content">
+      {{- if not (.Param "disableAnchoredHeadings") }}
+      {{- partial "anchored_headings.html" .Content -}}
+      {{- else }}{{ .Content }}{{ end }}
+    </div>
+    {{- end }}
+
+    <footer class="post-footer">
+      {{/* Chapter Prev/Next navigation */}}
+      {{- $found := false }}
+      {{- $prev := false }}
+      {{- $next := false }}
+      {{- range $i, $ch := $chapters }}
+        {{- if eq $ch.slug $currentSlug }}
+          {{- $found = true }}
+          {{- if gt $i 0 }}
+            {{- $prev = index $chapters (sub $i 1) }}
+          {{- end }}
+        {{- else if $found }}
+          {{- if not $next }}
+            {{- $next = $ch }}
+          {{- end }}
+        {{- end }}
+      {{- end }}
+
+      <nav class="paginav">
+        {{- with $prev }}
+        <a class="prev" href="{{ printf "/%s/books/%s/%s/" $lang $bookSlug .slug | absURL }}">
+          <span class="title">« {{ i18n "chapter_prev" }}</span>
+          <br>
+          <span>{{ .title }}</span>
+        </a>
+        {{- end }}
+        {{- with $next }}
+        <a class="next" href="{{ printf "/%s/books/%s/%s/" $lang $bookSlug .slug | absURL }}">
+          <span class="title">{{ i18n "chapter_next" }} »</span>
+          <br>
+          <span>{{ .title }}</span>
+        </a>
+        {{- end }}
+      </nav>
+    </footer>
+  </article>
+</div>
+{{- end }}

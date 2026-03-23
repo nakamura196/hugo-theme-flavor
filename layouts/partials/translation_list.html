@@ -1,0 +1,13 @@
+{{- if .IsTranslated -}}
+<span class="translation-links">
+    {{- range .Translations }}
+    <a href="{{ .Permalink }}" class="translation-link">
+        {{- if (and site.Params.displayFullLangName (.Language.LanguageName)) }}
+        {{- .Language.LanguageName | emojify -}}
+        {{- else }}
+        {{- .Lang | title -}}
+        {{- end -}}
+    </a>
+    {{- end }}
+</span>
+{{- end -}}

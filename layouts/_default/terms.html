@@ -1,0 +1,63 @@
+{{- define "main" }}
+
+<div class="site-main">
+
+{{- if .Title }}
+<header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{- if .Description }}
+    <div class="post-description">
+        {{ .Description }}
+    </div>
+    {{- end }}
+</header>
+{{- end }}
+
+<div class="sort-bar">
+    <button class="active" data-sort="count">{{ i18n "by_count" }}</button>
+    <button data-sort="alpha">{{ i18n "alphabetical" }}</button>
+</div>
+
+<div class="terms-tags" id="terms-list" style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+    {{- $type := .Type }}
+    {{- range $key, $value := .Data.Terms.ByCount }}
+    {{- $name := .Name }}
+    {{- $count := .Count }}
+    {{- with site.GetPage (printf "/%s/%s" $type $name) }}
+    <a href="{{ .Permalink }}" class="tag-pill" data-count="{{ $count }}" data-name="{{ .Name | lower }}">
+        {{ .Name }}&nbsp;<span style="opacity:0.6;font-size:0.85em;">{{ $count }}</span>
+    </a>
+    {{- end }}
+    {{- end }}
+</div>
+
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var btns = document.querySelectorAll('.sort-bar button');
+    var list = document.getElementById('terms-list');
+
+    btns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            btns.forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+
+            var items = Array.from(list.children);
+            var sort = btn.dataset.sort;
+
+            items.sort(function(a, b) {
+                if (sort === 'count') {
+                    return parseInt(b.dataset.count) - parseInt(a.dataset.count);
+                } else {
+                    return a.dataset.name.localeCompare(b.dataset.name);
+                }
+            });
+
+            items.forEach(function(item) { list.appendChild(item); });
+        });
+    });
+});
+</script>
+
+{{- end }}{{/* end main */ -}}

@@ -1,0 +1,31 @@
+{{- define "main" }}
+
+<div class="site-main">
+    <header class="page-header">
+        <h1>{{ i18n "categories_label" }}</h1>
+    </header>
+
+    <div class="category-cards">
+        {{- $type := .Type }}
+        {{- range $key, $value := .Data.Terms.Alphabetical }}
+        {{- $name := .Name }}
+        {{- $count := .Count }}
+        {{- with site.GetPage (printf "/%s/%s" $type $name) }}
+        <a href="{{ .Permalink }}" class="category-card">
+            {{- $icon := "" }}
+            {{- if eq $name "humanities" }}{{ $icon = "📚" }}
+            {{- else if eq $name "tech" }}{{ $icon = "💻" }}
+            {{- else }}{{ $icon = "📁" }}
+            {{- end }}
+            <span class="category-card-icon">{{ $icon }}</span>
+            <div>
+                <div class="category-card-title">{{ .Name | humanize }}</div>
+                <span class="category-card-count">{{ $count }} {{ i18n "posts_count" }}</span>
+            </div>
+        </a>
+        {{- end }}
+        {{- end }}
+    </div>
+</div>
+
+{{- end }}

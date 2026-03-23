@@ -1,0 +1,243 @@
+<script src="/pagefind/pagefind-ui.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', function () {
+    var el = document.getElementById('search');
+    if (!el) return;
+
+    var lang = document.documentElement.lang || 'ja';
+    var placeholders = {
+      ja: '検索...',
+      en: 'Search...',
+      zh: '搜索...'
+    };
+    var sortLabels = {
+      ja: { label: '並び替え:', relevance: '関連度順', newest: '新しい順', oldest: '古い順' },
+      en: { label: 'Sort:', relevance: 'Relevance', newest: 'Newest first', oldest: 'Oldest first' },
+      zh: { label: '排序:', relevance: '相关度', newest: '最新优先', oldest: '最旧优先' }
+    };
+    var labels = sortLabels[lang] || sortLabels['ja'];
+
+    var pfUI = new PagefindUI({
+      element: '#search',
+      showSubResults: true,
+      showEmptyFilters: false,
+      translations: {
+        placeholder: placeholders[lang] || placeholders['ja'],
+        zero_results: lang === 'ja' ? '「[SEARCH_TERM]」の検索結果はありません' :
+                      lang === 'zh' ? '未找到「[SEARCH_TERM]」的结果' :
+                      'No results for "[SEARCH_TERM]"',
+        load_more: lang === 'ja' ? 'さらに読み込む' :
+                   lang === 'zh' ? '加载更多' : 'Load more',
+        many_results: lang === 'ja' ? '[COUNT]件の検索結果' :
+                      lang === 'zh' ? '找到[COUNT]个结果' :
+                      '[COUNT] results',
+        one_result: lang === 'ja' ? '1件の検索結果' :
+                    lang === 'zh' ? '找到1个结果' : '1 result',
+        filter_results: lang === 'ja' ? 'フィルタ' :
+                        lang === 'zh' ? '筛选' : 'Filters',
+      }
+    });
+
+    // --- URL query parameter helpers ---
+    function getQueryParam(name) {
+      return new URLSearchParams(window.location.search).get(name);
+    }
+
+    function updateQueryParam(key, value) {
+      var url = new URL(window.location);
+      if (value) {
+        url.searchParams.set(key, value);
+      } else {
+        url.searchParams.delete(key);
+      }
+      window.history.replaceState({}, '', url);
+    }
+
+    // --- Sort controls ---
+    var sortBar = document.getElementById('search-sort');
+    var currentSort = 'relevance';
+
+    if (sortBar) {
+      var labelSpan = document.createElement('span');
+      labelSpan.className = 'search-sort-label';
+      labelSpan.textContent = labels.label;
+      sortBar.appendChild(labelSpan);
+
+      ['relevance', 'newest', 'oldest'].forEach(function (key) {
+        var btn = document.createElement('button');
+        btn.textContent = labels[key];
+        btn.className = 'search-sort-btn' + (key === 'relevance' ? ' active' : '');
+        btn.dataset.sort = key;
+        btn.addEventListener('click', function () {
+          if (currentSort === key) return;
+          currentSort = key;
+          sortBar.querySelectorAll('.search-sort-btn').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.sort === key);
+          });
+          updateQueryParam('sort', key === 'relevance' ? '' : key);
+          applySortToResults();
+        });
+        sortBar.appendChild(btn);
+      });
+
+      // Restore sort from URL
+      var urlSort = getQueryParam('sort');
+      if (urlSort && (urlSort === 'newest' || urlSort === 'oldest')) {
+        currentSort = urlSort;
+        sortBar.querySelectorAll('.search-sort-btn').forEach(function (b) {
+          b.classList.toggle('active', b.dataset.sort === urlSort);
+        });
+      }
+    }
+
+    // --- Pagefind JS API for date metadata ---
+    var pagefind = null;
+    var dateCache = {}; // url -> date string
+    var apiReady = import('/pagefind/pagefind.js').then(function (module) {
+      pagefind = module;
+      return pagefind.init();
+    }).catch(function () {
+      // Pagefind index not available (e.g. dev server without build)
+    });
+
+    // Use Pagefind API search to build date cache for current query
+    var lastSearchTerm = '';
+    function buildDateCache(searchTerm) {
+      if (!pagefind || !searchTerm) return Promise.resolve();
+      if (searchTerm === lastSearchTerm && Object.keys(dateCache).length > 0) {
+        return Promise.resolve();
+      }
+      lastSearchTerm = searchTerm;
+
+      return pagefind.search(searchTerm).then(function (search) {
+        // Load all results to get their metadata
+        var loads = search.results.map(function (r) {
+          return r.data().then(function (data) {
+            var url = data.url.replace(/\/$/, '');
+            dateCache[url] = (data.meta && data.meta.date) || '';
+          });
+        });
+        return Promise.all(loads);
+      }).catch(function () {});
+    }
+
+    // Apply date attributes from cache to DOM result elements and show date badge
+    function stampDates() {
+      var results = el.querySelectorAll('.pagefind-ui__result');
+      results.forEach(function (resultEl) {
+        var link = resultEl.querySelector('.pagefind-ui__result-link');
+        if (!link) return;
+        var url = (link.getAttribute('href') || '').replace(/\/$/, '');
+        if (dateCache[url] !== undefined) {
+          resultEl.setAttribute('data-date', dateCache[url]);
+          // Insert date badge if not already present
+          if (!resultEl.querySelector('.search-result-date') && dateCache[url]) {
+            var badge = document.createElement('span');
+            badge.className = 'search-result-date';
+            badge.textContent = dateCache[url].slice(0, 10);
+            var title = resultEl.querySelector('.pagefind-ui__result-title');
+            if (title) {
+              title.appendChild(badge);
+            }
+          }
+        }
+      });
+    }
+
+    function applySortToResults() {
+      // Results live inside: .pagefind-ui__results-area > ol.pagefind-ui__results
+      var listEl = el.querySelector('.pagefind-ui__results-area ol.pagefind-ui__results');
+      if (!listEl) return;
+
+      // Get the current search term
+      var searchInput = el.querySelector('.pagefind-ui__search-input');
+      var searchTerm = searchInput ? searchInput.value : '';
+
+      if (currentSort === 'relevance') {
+        // For relevance, re-trigger the search to restore original order
+        if (searchInput && searchTerm) {
+          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        return;
+      }
+
+      // Build date cache, then sort
+      apiReady.then(function () {
+        return buildDateCache(searchTerm);
+      }).then(function () {
+        stampDates();
+        sortResultElements(listEl);
+      });
+    }
+
+    function sortResultElements(listEl) {
+      var results = Array.from(listEl.querySelectorAll(':scope > .pagefind-ui__result'));
+      if (results.length < 2) return;
+
+      results.sort(function (a, b) {
+        var dateA = parseDateAttr(a.getAttribute('data-date'));
+        var dateB = parseDateAttr(b.getAttribute('data-date'));
+        if (currentSort === 'newest') return dateB - dateA;
+        return dateA - dateB;
+      });
+
+      // Reorder DOM (disconnect observer to avoid loop)
+      if (sortObserver) sortObserver.disconnect();
+      results.forEach(function (r) { listEl.appendChild(r); });
+      if (sortObserver) {
+        sortObserver.observe(el, { childList: true, subtree: true });
+      }
+    }
+
+    function parseDateAttr(val) {
+      if (!val) return 0;
+      var d = new Date(val);
+      return isNaN(d.getTime()) ? 0 : d.getTime();
+    }
+
+    // Observe result changes to enrich with dates and re-sort if needed
+    var sortDebounce = null;
+    var sortObserver = new MutationObserver(function () {
+      clearTimeout(sortDebounce);
+      sortDebounce = setTimeout(function () {
+        var searchInput = el.querySelector('.pagefind-ui__search-input');
+        var searchTerm = searchInput ? searchInput.value : '';
+        if (!searchTerm) return;
+
+        apiReady.then(function () {
+          return buildDateCache(searchTerm);
+        }).then(function () {
+          stampDates();
+          if (currentSort !== 'relevance') {
+            var listEl = el.querySelector('.pagefind-ui__results-area ol.pagefind-ui__results');
+            if (listEl) sortResultElements(listEl);
+          }
+        });
+      }, 200);
+    });
+    sortObserver.observe(el, { childList: true, subtree: true });
+
+    // --- Search input: sync with URL ---
+    // Use a small delay to wait for PagefindUI to render its input
+    setTimeout(function () {
+      var searchInput = el.querySelector('.pagefind-ui__search-input');
+      if (!searchInput) return;
+
+      var debounceTimer;
+      searchInput.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        var val = searchInput.value;
+        debounceTimer = setTimeout(function () {
+          updateQueryParam('q', val || '');
+        }, 300);
+      });
+
+      // Auto-fill from URL on page load
+      var initialQuery = getQueryParam('q');
+      if (initialQuery) {
+        searchInput.value = initialQuery;
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }, 100);
+  });
+</script>
