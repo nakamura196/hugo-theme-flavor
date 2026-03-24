@@ -6,7 +6,7 @@
 
 A modern Hugo theme built with Tailwind CSS v4. Clean design with dark/light mode, multilingual support (45+ languages), sticky sidebar TOC, full-text search, and a books content type.
 
-![Screenshot](images/screenshot.png)
+![Screenshot](https://raw.githubusercontent.com/nakamura196/hugo-theme-flavor/main/images/screenshot.png)
 
 ---
 
