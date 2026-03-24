@@ -25,15 +25,21 @@ languages:
         - name: Articles
           url: /en/posts/
           weight: 2
-        - name: Tags
-          url: /en/tags/
+        - name: Books
+          url: /en/books/
           weight: 3
+        - name: Archives
+          url: /en/archives/
+          weight: 4
+        - name: Categories
+          url: /en/categories/
+          weight: 5
         - name: Search
           url: /en/search/
-          weight: 4
+          weight: 6
         - name: About
           url: /en/about/
-          weight: 5
+          weight: 7
       footer:
         - name: Home
           url: /en/
@@ -45,14 +51,88 @@ languages:
           weight: 2
           params:
             group: Content
+        - name: Books
+          url: /en/books/
+          weight: 3
+          params:
+            group: Content
         - name: Tags
           url: /en/tags/
-          weight: 3
+          weight: 4
+          params:
+            group: Browse
+        - name: Categories
+          url: /en/categories/
+          weight: 5
           params:
             group: Browse
         - name: About
           url: /en/about/
+          weight: 6
+          params:
+            group: Other
+  ja:
+    languageName: "日本語"
+    weight: 2
+    contentDir: "content/ja"
+    title: "技術ブログ"
+    params:
+      description: "技術やソフトウェア開発に関するブログ"
+      homeInfoParams:
+        Title: "技術ブログ"
+        Content: "技術、ソフトウェア開発などに関する情報を発信しています"
+    menu:
+      main:
+        - name: ホーム
+          url: /ja/
+          weight: 1
+        - name: 記事一覧
+          url: /ja/posts/
+          weight: 2
+        - name: ブック
+          url: /ja/books/
+          weight: 3
+        - name: アーカイブ
+          url: /ja/archives/
           weight: 4
+        - name: カテゴリ
+          url: /ja/categories/
+          weight: 5
+        - name: 検索
+          url: /ja/search/
+          weight: 6
+        - name: このサイトについて
+          url: /ja/about/
+          weight: 7
+      footer:
+        - name: ホーム
+          url: /ja/
+          weight: 1
+          params:
+            group: Content
+        - name: 記事一覧
+          url: /ja/posts/
+          weight: 2
+          params:
+            group: Content
+        - name: ブック
+          url: /ja/books/
+          weight: 3
+          params:
+            group: Content
+        - name: タグ
+          url: /ja/tags/
+          weight: 4
+          params:
+            group: Browse
+        - name: カテゴリ
+          url: /ja/categories/
+          weight: 5
+          params:
+            group: Browse
+        - name: このサイトについて
+          url: /ja/about/
+          weight: 6
           params:
             group: Other
 
@@ -64,6 +144,9 @@ params:
   showBreadCrumbs: true
   showCodeCopyButtons: true
   showToc: true
+  showPostNavLinks: true
+  ShowAllPagesInArchive: true
+  buyMeACoffeeUsername: "example"
   defaultTheme: auto
   disableThemeToggle: false
   label:

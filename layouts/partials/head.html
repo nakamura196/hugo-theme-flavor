@@ -123,7 +123,9 @@
 {{- end }}
 
 {{- /* Pagefind CSS */}}
+{{- if eq .Layout "search" }}
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+{{- end }}
 
 {{- /* SEO templates */}}
 {{- if hugo.IsProduction | or (eq site.Params.env "production") }}

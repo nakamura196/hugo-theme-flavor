@@ -45,7 +45,7 @@
   <div class="post-entry-content">
     <h2 class="post-entry-title">
       {{- .Title -}}
-      {{- if .Draft }} <span class="draft-badge">Draft</span>{{ end -}}
+      {{- if .Draft }} <span class="draft-badge">{{ i18n "draft" }}</span>{{ end -}}
     </h2>
     {{- if (ne (.Param "hideSummary") true) }}
     <p class="post-entry-summary">{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
@@ -58,7 +58,7 @@
 {{- end }}
 
 {{- if gt $paginator.TotalPages 1 }}
-<nav class="pagination">
+<nav class="pagination" aria-label="Pagination">
   {{- if $paginator.HasPrev }}
   <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">
     «&nbsp;{{ i18n "prev_page" }}

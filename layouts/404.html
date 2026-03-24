@@ -1,11 +1,14 @@
 {{- define "main" }}
 <div class="site-main" style="text-align:center;padding:4rem var(--gap);">
   <h1 style="font-size:6rem;font-weight:700;color:var(--color-accent);margin-bottom:1rem;">404</h1>
-  <p style="font-size:1.25rem;color:var(--color-secondary);margin-bottom:2rem;">
-    {{ i18n "page_not_found" | default "Page not found" }}
+  <p style="font-size:1.25rem;color:var(--color-secondary);margin-bottom:0.5rem;">
+    {{ i18n "page_not_found" }}
+  </p>
+  <p style="color:var(--color-secondary);margin-bottom:2rem;">
+    {{ i18n "page_not_found_text" }}
   </p>
   <a href="{{ "" | absLangURL }}" style="display:inline-block;padding:0.75rem 1.5rem;background:var(--color-accent);color:#fff;border-radius:8px;font-weight:500;transition:opacity 0.2s;">
-    {{ i18n "home" | default "Home" }}
+    {{ i18n "back_to_home" }}
   </a>
 </div>
 {{- end }}

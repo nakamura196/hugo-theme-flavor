@@ -94,3 +94,24 @@
 
 - id: all_posts
   translation: "All posts"
+
+- id: draft
+  translation: "Draft"
+
+- id: powered_by
+  translation: "Powered by"
+
+- id: go_to_top
+  translation: "Go to Top (Alt + G)"
+
+- id: toggle_menu
+  translation: "Toggle menu"
+
+- id: page_not_found
+  translation: "Page not found"
+
+- id: page_not_found_text
+  translation: "Sorry, the page you are looking for does not exist."
+
+- id: back_to_home
+  translation: "Back to Home"

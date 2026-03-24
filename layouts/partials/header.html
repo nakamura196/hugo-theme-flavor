@@ -7,7 +7,7 @@
         {{- end }}
 
         {{- /* Desktop Navigation */}}
-        <nav class="site-nav">
+        <nav class="site-nav" aria-label="Main navigation">
             {{- $currentPage := . }}
             {{- range site.Menus.main }}
             {{- $menu_item_url := (cond (strings.HasSuffix .URL "/") .URL (printf "%s/" .URL) ) | absLangURL }}
@@ -25,13 +25,13 @@
         {{- /* Controls: theme toggle + language switch */}}
         <div class="header-controls">
             {{- if (not site.Params.disableThemeToggle) }}
-            <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+            <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="{{ i18n "toggle_theme" }}">
                 <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                 </svg>
                 <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="5"></circle>
                     <line x1="12" y1="1" x2="12" y2="3"></line>
                     <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -60,32 +60,30 @@
         </div>
 
         {{- /* Hamburger (mobile) */}}
-        <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <button class="hamburger" id="hamburger" aria-label="{{ i18n "toggle_menu" }}" aria-expanded="false" aria-controls="mobile-menu">
             <svg class="hamburger-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="3" y1="6" x2="21" y2="6"></line>
                 <line x1="3" y1="12" x2="21" y2="12"></line>
                 <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
             <svg class="close-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
-                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
         </button>
     </div>
-
-    </div>
 </header>
 
 {{- /* Mobile Menu - OUTSIDE header to avoid stacking context issues */}}
-<div class="mobile-menu" id="mobile-menu">
+<nav class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation">
     {{- range site.Menus.main }}
     <a href="{{ .URL | absLangURL }}">{{ .Name }}</a>
     {{- end }}
     <div style="display:flex;gap:0.5rem;padding:1rem 0;margin-top:0.5rem;">
         {{- if (not site.Params.disableThemeToggle) }}
-        <button id="mobile-theme-toggle" aria-label="Toggle theme" style="padding:0.5rem 1rem;border:1px solid var(--color-border);border-radius:6px;background:var(--color-entry);color:var(--color-primary);cursor:pointer;">
+        <button id="mobile-theme-toggle" aria-label="{{ i18n "toggle_theme" }}" style="padding:0.5rem 1rem;border:1px solid var(--color-border);border-radius:6px;background:var(--color-entry);color:var(--color-primary);cursor:pointer;">
             {{ i18n "toggle_theme" }}
         </button>
         {{- end }}
@@ -100,7 +98,7 @@
         {{- end }}
         {{- end }}
     </div>
-</div>
+</nav>
 
 <script>
 (function() {

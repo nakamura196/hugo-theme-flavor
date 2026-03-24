@@ -94,3 +94,24 @@
 
 - id: all_posts
   translation: "すべての記事"
+
+- id: draft
+  translation: "下書き"
+
+- id: powered_by
+  translation: "Powered by"
+
+- id: go_to_top
+  translation: "トップへ (Alt + G)"
+
+- id: toggle_menu
+  translation: "メニュー"
+
+- id: page_not_found
+  translation: "ページが見つかりません"
+
+- id: page_not_found_text
+  translation: "お探しのページは存在しません。"
+
+- id: back_to_home
+  translation: "ホームに戻る"
