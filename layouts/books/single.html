@@ -8,7 +8,7 @@
 <div class="book-layout">
   {{/* Mobile toggle */}}
   <button class="book-sidebar-toggle" onclick="document.querySelector('.book-sidebar').classList.toggle('open')" aria-label="Toggle sidebar">
-    ☰ {{ i18n "chapters_label" }}
+    {{- if eq $lang "ja" }}☰ 目次{{ else }}☰ Chapters{{ end }}
   </button>
 
   {{/* Sidebar */}}
@@ -38,7 +38,7 @@
       <div class="post-meta">
         {{- partial "post_meta.html" . -}}
         {{- with .Params.source }}
-        &nbsp;·&nbsp;<a href="{{ . }}" target="_blank" rel="noopener">{{ i18n "read_on_source" }}</a>
+        &nbsp;·&nbsp;<a href="{{ . }}" target="_blank" rel="noopener">{{ if eq $lang "ja" }}Zenn で読む →{{ else }}Read on Zenn →{{ end }}</a>
         {{- end }}
       </div>
     </header>
@@ -76,14 +76,14 @@
       <nav class="paginav">
         {{- with $prev }}
         <a class="prev" href="{{ printf "/%s/books/%s/%s/" $lang $bookSlug .slug | absURL }}">
-          <span class="title">« {{ i18n "chapter_prev" }}</span>
+          <span class="title">{{ if eq $lang "ja" }}« 前の章{{ else }}« Previous{{ end }}</span>
           <br>
           <span>{{ .title }}</span>
         </a>
         {{- end }}
         {{- with $next }}
         <a class="next" href="{{ printf "/%s/books/%s/%s/" $lang $bookSlug .slug | absURL }}">
-          <span class="title">{{ i18n "chapter_next" }} »</span>
+          <span class="title">{{ if eq $lang "ja" }}次の章 »{{ else }}Next »{{ end }}</span>
           <br>
           <span>{{ .title }}</span>
         </a>

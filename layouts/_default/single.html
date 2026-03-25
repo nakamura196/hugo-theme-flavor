@@ -24,7 +24,7 @@
   {{- if $hasToc }}
   <aside class="post-sidebar">
     <div class="post-sidebar-inner">
-      <div class="toc-title">{{ i18n "table_of_contents" }}</div>
+      <div class="toc-title">{{ if eq .Lang "ja" }}目次{{ else }}Table of Contents{{ end }}</div>
       {{- .TableOfContents -}}
     </div>
   </aside>
@@ -75,7 +75,7 @@
     {{- $related := first 5 (.Site.RegularPages.Related .) }}
     {{- with $related }}
     <div class="related-posts">
-      <div class="related-posts-title">{{ i18n "related_articles" }}</div>
+      <div class="related-posts-title">{{ if eq $.Lang "ja" }}関連記事{{ else }}Related Articles{{ end }}</div>
       {{- range . }}
       <a class="related-post-item" href="{{ .RelPermalink }}">
         <span class="related-post-title">{{ .Title }}</span>

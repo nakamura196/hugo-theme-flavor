@@ -5,7 +5,7 @@
 {{- end }}
 
 {{- if and (ne .Lastmod .Date) (not .Lastmod.IsZero) -}}
-{{- $label := i18n "updated" -}}
+{{- $label := cond (eq .Lang "ja") "更新" "Updated" -}}
 {{- $scratch.Add "meta" (slice (printf "<span title='%s'>%s: %s</span>" (.Lastmod) $label (.Lastmod | time.Format (default ":date_long" site.Params.DateFormat)))) }}
 {{- end }}
 

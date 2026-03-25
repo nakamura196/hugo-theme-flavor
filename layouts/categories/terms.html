@@ -2,7 +2,7 @@
 
 <div class="site-main">
     <header class="page-header">
-        <h1>{{ i18n "categories_label" }}</h1>
+        <h1>{{ if eq (site.Language.Lang) "ja" }}カテゴリ{{ else }}Categories{{ end }}</h1>
     </header>
 
     <div class="category-cards">
@@ -20,7 +20,7 @@
             <span class="category-card-icon">{{ $icon }}</span>
             <div>
                 <div class="category-card-title">{{ .Name | humanize }}</div>
-                <span class="category-card-count">{{ $count }} {{ i18n "posts_count" }}</span>
+                <span class="category-card-count">{{ $count }} {{ if eq (site.Language.Lang) "ja" }}記事{{ else if eq (site.Language.Lang) "zh" }}篇文章{{ else }}posts{{ end }}</span>
             </div>
         </a>
         {{- end }}

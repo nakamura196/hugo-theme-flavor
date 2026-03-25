@@ -22,20 +22,17 @@
     {{- .Summary | default (printf "%s - %s" .Title  site.Title) }}{{- else }}
     {{- with site.Params.description }}{{ . }}{{- end }}{{- end }}{{- end -}}">
 <meta name="author" content="{{ site.Params.author | default "" }}">
+{{- with site.Params.analytics.google.SiteVerificationTag }}
+<meta name="google-site-verification" content="{{ . }}">
+{{- end }}
 <link rel="canonical" href="{{ if .Params.canonicalURL -}} {{ trim .Params.canonicalURL " " }} {{- else -}} {{ .Permalink }} {{- end }}">
 
-{{- /* Google Fonts */}}
-{{- with site.Params.fonts }}
-{{- with .google_fonts_url }}
+{{- /* Google Fonts - async loading to avoid render blocking */}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="{{ . }}" rel="stylesheet">
-{{- end }}
-{{- else }}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-{{- end }}
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@700&display=swap">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Serif+JP:wght@700&display=swap" rel="stylesheet"></noscript>
 
 {{- /* Tailwind CSS via Hugo's built-in pipeline */}}
 {{- $css := resources.Get "css/main.css" }}
@@ -47,21 +44,12 @@
   <link rel="stylesheet" href="{{ $css.RelPermalink }}">
 {{- end }}
 
-{{- /* Font overrides via site.Params.fonts */}}
-{{- with site.Params.fonts }}
-<style>
-  :root {
-    {{- with .sans }}--font-sans: {{ . }};{{ end }}
-    {{- with .serif }}--font-serif: {{ . }};{{ end }}
-    {{- with .mono }}--font-mono: {{ . }};{{ end }}
-  }
-</style>
-{{- end }}
-
-{{- /* Chroma syntax highlighting */}}
+{{- /* Chroma syntax highlighting - only on pages with code */}}
+{{- if or (eq .Kind "page") (eq .Kind "section") }}
 {{ $chromaCSS := resources.Get "css/includes/chroma-styles.css" | default false }}
 {{- if $chromaCSS }}
 <style>{{ $chromaCSS.Content | safeCSS }}</style>
+{{- end }}
 {{- end }}
 
 {{- /* Favicons */}}
@@ -122,9 +110,22 @@
 </script>
 {{- end }}
 
-{{- /* Pagefind CSS */}}
+{{- /* Pagefind CSS - only on search pages */}}
 {{- if eq .Layout "search" }}
 <link href="/pagefind/pagefind-ui.css" rel="stylesheet">
+{{- end }}
+
+{{- /* Google Analytics */}}
+{{- with site.Params.analytics.google.gtagId }}
+{{- if hugo.IsProduction | or (eq site.Params.env "production") }}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', '{{ . }}');
+</script>
+{{- end }}
 {{- end }}
 
 {{- /* SEO templates */}}

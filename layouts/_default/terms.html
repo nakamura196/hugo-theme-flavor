@@ -14,8 +14,8 @@
 {{- end }}
 
 <div class="sort-bar">
-    <button class="active" data-sort="count">{{ i18n "by_count" }}</button>
-    <button data-sort="alpha">{{ i18n "alphabetical" }}</button>
+    <button class="active" data-sort="count">{{ if eq site.Language.Lang "ja" }}件数順{{ else }}By Count{{ end }}</button>
+    <button data-sort="alpha">{{ if eq site.Language.Lang "ja" }}名前順{{ else }}Alphabetical{{ end }}</button>
 </div>
 
 <div class="terms-tags" id="terms-list" style="display:flex;flex-wrap:wrap;gap:0.5rem;">

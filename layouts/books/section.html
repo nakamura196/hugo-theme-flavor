@@ -21,13 +21,13 @@
       </div>
       {{ end }}
       {{ with .Params.source }}
-      <a href="{{ . }}" target="_blank" rel="noopener" class="book-source-link">{{ i18n "read_on_source" }}</a>
+      <a href="{{ . }}" target="_blank" rel="noopener" class="book-source-link">{{ if eq $lang "ja" }}Zenn で読む →{{ else }}Read on Zenn →{{ end }}</a>
       {{ end }}
     </div>
   </header>
 
   <section class="book-toc">
-    <h2>{{ i18n "chapters_label" }}</h2>
+    <h2>{{ if eq $lang "ja" }}目次{{ else }}Table of Contents{{ end }}</h2>
     <ol class="book-chapter-list">
       {{- range .Params.chapters }}
       <li>
@@ -57,7 +57,7 @@
         <h2 class="book-card-title">{{ .Title }}</h2>
         {{ with .Description }}<p class="book-card-desc">{{ . }}</p>{{ end }}
         {{ with .Params.chapters }}
-        <span class="book-card-meta">{{ len . }} {{ i18n "chapters_count" }}</span>
+        <span class="book-card-meta">{{ len . }} {{ if eq $lang "ja" }}章{{ else }}chapters{{ end }}</span>
         {{ end }}
         {{ with .Params.tags }}
         <div class="book-card-tags">

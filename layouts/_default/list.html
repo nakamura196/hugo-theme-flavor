@@ -1,5 +1,9 @@
 {{- define "main" }}
 
+{{- if (and site.Params.profileMode.enabled .IsHome) }}
+{{- partial "index_profile.html" . }}
+{{- else }}
+
 {{- $pages := union .RegularPages .Sections }}
 
 {{- if .IsHome }}
@@ -17,7 +21,7 @@
 
 {{- if .IsHome }}
 <h2 class="home-section-title">
-  {{ i18n "latest_articles" }}
+  {{- if eq .Lang "ja" }}最新の記事{{- else }}Latest Articles{{- end }}
 </h2>
 {{- else if .Title }}
   {{- partial "breadcrumbs.html" . }}
@@ -45,7 +49,7 @@
   <div class="post-entry-content">
     <h2 class="post-entry-title">
       {{- .Title -}}
-      {{- if .Draft }} <span class="draft-badge">{{ i18n "draft" }}</span>{{ end -}}
+      {{- if .Draft }} <span class="draft-badge">Draft</span>{{ end -}}
     </h2>
     {{- if (ne (.Param "hideSummary") true) }}
     <p class="post-entry-summary">{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
@@ -58,7 +62,7 @@
 {{- end }}
 
 {{- if gt $paginator.TotalPages 1 }}
-<nav class="pagination" aria-label="Pagination">
+<nav class="pagination">
   {{- if $paginator.HasPrev }}
   <a class="prev" href="{{ $paginator.Prev.URL | absURL }}">
     «&nbsp;{{ i18n "prev_page" }}
@@ -76,4 +80,5 @@
 
 </div>
 
+{{- end }}
 {{- end }}
