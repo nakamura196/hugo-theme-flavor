@@ -20,6 +20,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: exampleSite/package-lock.json
       # lockfile が package.json と合っていないリポジトリがあるので、その場合は入れ直す
       - run: npm ci --ignore-scripts || npm install --ignore-scripts --no-audit --no-fund
+        working-directory: exampleSite
       - run: npm run build --if-present
+        working-directory: exampleSite
